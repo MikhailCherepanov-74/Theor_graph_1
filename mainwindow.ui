@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1387</width>
-    <height>729</height>
+    <width>1415</width>
+    <height>847</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>830</x>
       <y>9</y>
-      <width>531</width>
-      <height>511</height>
+      <width>541</width>
+      <height>441</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -136,8 +136,8 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>1090</x>
-      <y>580</y>
+      <x>1070</x>
+      <y>670</y>
       <width>271</width>
       <height>91</height>
      </rect>
@@ -180,8 +180,8 @@
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>500</y>
+      <x>780</x>
+      <y>620</y>
       <width>261</width>
       <height>176</height>
      </rect>
@@ -241,13 +241,142 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>1110</x>
+      <y>500</y>
+      <width>192</width>
+      <height>153</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="find_max_flow">
+       <property name="text">
+        <string>Find max flow</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="add_random_cost_edge">
+       <property name="text">
+        <string>Add random cost edges</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="delete_all_costs">
+       <property name="text">
+        <string>Delete costs</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="find_min_cost_max_flow">
+       <property name="text">
+        <string>Find min cost 2/3 max flow</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="change_orient">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>450</y>
+      <width>391</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Дезориентировать/ориентировать граф</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>490</y>
+      <width>236</width>
+      <height>120</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_8">
+     <item>
+      <widget class="QPushButton" name="find_prima">
+       <property name="text">
+        <string>Алгоритм Прима</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="find_cruskala">
+       <property name="text">
+        <string>Алгоритм Краскала</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="code_prufer">
+       <property name="text">
+        <string>Код Прюфера</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="find_amount_ostov">
+       <property name="text">
+        <string>Количество остовных деревьев</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_6">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>700</y>
+      <width>256</width>
+      <height>89</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_6">
+     <item>
+      <widget class="QPushButton" name="find_ailer_circle">
+       <property name="text">
+        <string>Найти эйлеров цикл</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="build_gamilton">
+       <property name="text">
+        <string>Достроить до Гамильтонова графа</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="find_comivoajor">
+       <property name="text">
+        <string>Задача комивояжёра</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1387</width>
+     <width>1415</width>
      <height>22</height>
     </rect>
    </property>

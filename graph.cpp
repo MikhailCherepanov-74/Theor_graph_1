@@ -1,4 +1,4 @@
-#include "graph.h"
+    #include "graph.h"
 
 Graph::Graph(){
    // QVector<int> h={0};
@@ -55,6 +55,14 @@ Graph::Graph(QStandardItemModel* model){
     }
 
 }
+Graph::Graph(Matrix m){
+   // Matrix m1=m;
+    this->matrix_weight=new Matrix(m.data);
+   /* this->matrix_weight->data=m.data;
+    this->matrix_weight->Mstolb=m.Mstolb;
+    this->matrix_weight->Nstring=m.Nstring;*/
+    amount_node=m.Mstolb;
+}
 Graph::Graph(int amount_node){
     QVector<int> vec_distribution=GetGeometricDistribution(amount_node);
     QVector<int> h_vec;
@@ -75,6 +83,15 @@ Graph::Graph(int amount_node){
     }
     for_matrix.push_back(h_vec);
     this->matrix_weight=new Matrix(for_matrix);
+    // ///                  для задания единственного стока в графе
+    for(int j=2;j<=amount_node;j++){
+        int sum=0;
+        for(int i=0;i<=amount_node;i++){
+            sum+=matrix_weight->data[i][j];
+        }
+        if(sum==0)
+            matrix_weight->data[1][j]=1;
+    }
 }
 void Graph::AddNode(){
     if(matrix_weight==NULL)
@@ -236,6 +253,10 @@ QVector<int> Graph::GetGeometricDistribution(int amount){
          for(int j=0;j<vec_property[i]*100;j++){
              returned.push_back(i);
          }
+     }
+     for(int i=0;i<returned.size();i++){
+         if(returned[i]==0)
+             returned[i]=1;
      }
      return returned;
 }
@@ -445,6 +466,339 @@ pair<QVector<int>,int> Graph::FindFloydWarshal(int node_begin, int node_end, int
    }
     return pair<QVector<int>,int>(rev_ret,my_matrix[node_begin][node_end]);
 }
+// ////////////////////////////////////  3 лаба////////////////////////////////////////////
+int Graph::FindMaxFlow(int v_begin, int v_end){
+    Matrix  matrix_flow=*(this->matrix_weight);
+    Matrix  matrix_reverse_flow(this->amount_node); // создали матрицу заполненную нулями
+    QVector<pair<int,int>>vec_label(this->amount_node+1,pair<int,int>(-1,-1));                              // величина/откуда пришли
+    int general_sum=0;
+
+    int sum_bound_counter=0;
+    for(int i=1;i<matrix_flow.data.size();i++)
+        sum_bound_counter+=matrix_flow.data[v_begin][i];
+    while(sum_bound_counter>0){
+    int i=v_begin;
+    vec_label[v_begin].first=INT_MAX;
+    vec_label[v_begin].second=0;
+    while(vec_label[v_end].second==-1){
+    map<int,int> M_i;
+    for(int j=1;j<matrix_flow.data.size();j++){
+        if(matrix_flow.data[i][j]>0&&vec_label[j].second==-1)
+            M_i.insert(pair<int,int>(j,matrix_flow.data[i][j]));
+    }
+    if(!M_i.empty()){
+        map<int,int>::iterator it=M_i.begin();
+        pair<int,int>k_max=pair<int,int>(0,0);
+        for(;it!=M_i.end();it++){
+            if(it->second>k_max.second){
+                k_max=*it;
+            }
+        }
+        vec_label[k_max.first].first=k_max.second;
+        vec_label[k_max.first].second=i;
+        i=k_max.first;
+    }
+    else{
+        if(i==1)
+            break;
+        int prev_node=vec_label[i].second;
+        for(int j=1;j<matrix_flow.data.size();j++){
+            if(matrix_flow.data[prev_node][j]>0&&vec_label[j].second==-1&&j!=i)
+                M_i.insert(pair<int,int>(j,matrix_flow.data[prev_node][j]));
+        }i=prev_node;
+
+    }
+
+}
+    int min_value=INT_MAX;
+    int current_vertex_from=vec_label[v_end].second;
+    int current_vertex_flow=vec_label[v_end].first;
+    if(current_vertex_from==-1)
+        break;
+    while(current_vertex_from!=v_begin){                                                   // шаг 5. Находим минимальное значение пропускаемости
+        if(min_value>current_vertex_flow){
+            min_value=current_vertex_flow;
+        }
+        current_vertex_flow=vec_label[current_vertex_from].first;
+        current_vertex_from=vec_label[current_vertex_from].second;// тут явно что-то не так с индексами
+    }
+    if(min_value>current_vertex_flow){
+        min_value=current_vertex_flow;
+    }
+    current_vertex_from=vec_label[v_end].second;
+    matrix_flow.data[current_vertex_from][v_end]-=min_value;
+    matrix_reverse_flow.data[current_vertex_from][v_end]+=min_value;
+    while(current_vertex_from!=v_begin){                                                   // уменьшим поток и увеличим обратный поток
+        matrix_flow.data[vec_label[current_vertex_from].second][current_vertex_from]-=min_value;
+        matrix_reverse_flow.data[vec_label[current_vertex_from].second][current_vertex_from]+=min_value;
+        current_vertex_from=vec_label[current_vertex_from].second;
+    }
+
+    general_sum+=min_value;
+    for(int k=0;k<vec_label.size();k++)
+        vec_label[k]=pair<int,int>(-1,-1);
+    sum_bound_counter=0;
+    for(int i=1;i<matrix_flow.data.size();i++)
+        sum_bound_counter+=matrix_flow.data[v_begin][i];
+}
+
+return general_sum;
+}
+
+int Graph::FindFlowMinCost(int v_begin, int v_end,Matrix matrix_cost){
+    int general_flow=(2*FindMaxFlow( v_begin, v_end))/3;
+
+    Graph help_graph(matrix_cost);
+    int waste_value;
+    pair<QVector<int>,int> pair_min_cost;
+    Matrix help_matrix_flow(matrix_weight->data);
+
+    int min_cost_returned=0;
+    while (general_flow>0) {
+        pair_min_cost=help_graph.FindBelmanFord(v_begin,v_end,waste_value);
+        int min_cost=pair_min_cost.second;
+        int local_max_flow=FindMaxFlowOneWay(pair_min_cost.first,help_matrix_flow);
+        QString str="";
+        for(int i=0;i<pair_min_cost.first.size();i++){
+            if(i!=0)
+                str+="->";
+            str+=QString::number(pair_min_cost.first[i]);
+        }
+        for(int i=1;i<amount_node+1;i++){
+            for(int j=1;j<amount_node+1;j++){
+               if(help_matrix_flow.data[i][j]==0)
+                   help_graph.matrix_weight->data[i][j]=0;  //записали нули в места, где поток заполнен
+            }
+        }
+        //qDebug()<<"матрица стоимости после изменеия: ";
+      //  help_graph.matrix_weight->Print();
+        if(local_max_flow<general_flow){
+            min_cost_returned+=min_cost*local_max_flow;
+
+        }
+        else
+            min_cost_returned+=min_cost*general_flow;
+        general_flow-=local_max_flow;
+        qDebug()<<"Количество потока "<<local_max_flow<<"проходит по пути"<<str;
+    }
+    return min_cost_returned;
+
+}
+int Graph::FindMaxFlowOneWay(QVector<int> vec_way,Matrix my_matrix){
+    int min_value=INT_MAX;
+    for(int i=0;i<vec_way.size()-1;i++){
+        if(my_matrix.data[vec_way[i]][vec_way[i+1]]<min_value)
+            min_value=my_matrix.data[vec_way[i]][vec_way[i+1]];
+    }
+    return min_value;
+}
+void Graph::ReduceWayInMatrix(QVector<int> vec_way, int value_reduce, Matrix &my_matrix){
+    for(int i=0;i<vec_way.size()-1;i++){
+        my_matrix.data[vec_way[i]][vec_way[i+1]]-=value_reduce;
+    }
+}
+// ////////////////////////////////////////////4 лаба/////////////////////////
+pair<QVector<pair<int,int>>,int>Graph::FindPrima(int&iteration_counter){
+    iteration_counter=0;
+    QVector<int> selected_v;
+    QVector<int> currents_v;
+    QVector<pair<int,int>> vec_pair_edges;
+    currents_v.push_back(1);
+    int min_value=INT_MAX;
+    int i_min;
+    int j_min;
+    int sum=0;
+    while(currents_v.size()<amount_node){
+        int min_value=INT_MAX;
+        for(int i=0;i<currents_v.size();i++){
+            for(int j=1;j<=matrix_weight->Mstolb;j++){
+                if(matrix_weight->data[currents_v[i]][j]!=0&&
+                        matrix_weight->data[currents_v[i]][j]<min_value&&
+                        find(currents_v.begin(), currents_v.end(), j)==currents_v.end()){
+                    min_value=matrix_weight->data[currents_v[i]][j];
+                    i_min=currents_v[i];
+                    j_min=j;
+                }
+                iteration_counter++;
+            }
+        }
+        vec_pair_edges.push_back(make_pair(i_min,j_min));
+        selected_v.push_back(j_min);
+        currents_v.push_back(j_min);
+        sum+=min_value;
+    }
+    return make_pair(vec_pair_edges,sum);
+}
+
+
+
+pair<QVector<pair<int,int>>,int>Graph::FindKruskal(int&iteration_counter){
+    QVector<pair<int,int>>returned;
+    iteration_counter=0;
+    multimap<int,pair<int,int>> map_edge;
+    vector<vector<int>> vec_comp_link;
+    for(int i=1;i<amount_node+1;i++){
+        vector<int> help_vec{i};
+        vec_comp_link.push_back(help_vec);
+    }
+    for (int i = 1; i <=amount_node; i++){
+          for (int j = i; j <=amount_node; j++){
+              if(matrix_weight->data[i][j]!=0){
+                  map_edge.insert( make_pair(matrix_weight->data[i][j],make_pair(i,j)));
+              }
+          }
+    }
+    int sum_ostov=0;
+    while(vec_comp_link.size()>1){
+
+        int lenght=map_edge.begin()->first;
+        int v1=map_edge.begin()->second.first;
+        int v2=map_edge.begin()->second.second;
+        for(int i=0;i<vec_comp_link.size();i++){
+
+            if(find(vec_comp_link[i].begin(),vec_comp_link[i].end(),v1)!=vec_comp_link[i].end())   {                 // если в текущей комп связности есть вершина 1
+                 if(find(vec_comp_link[i].begin(),vec_comp_link[i].end(),v2)!=vec_comp_link[i].end()){               // если вершина 2 в ней же
+                     map_edge.erase(map_edge.begin());
+                     iteration_counter++;
+                     break;
+                 }
+                 else{              //если вершина 2 в другой компоненте
+                     sum_ostov+=lenght;
+                     returned.push_back(map_edge.begin()->second);
+                     map_edge.erase(map_edge.begin());
+                     for(int j=0;j<vec_comp_link.size();j++){
+                         iteration_counter++;
+                         if(find(vec_comp_link[j].begin(),vec_comp_link[j].end(),v2)!=vec_comp_link[j].end()){      // поместили вершины из второй компоненты в первую
+                             vec_comp_link[i].insert(vec_comp_link[i].end(), vec_comp_link[j].begin(), vec_comp_link[j].end());
+                             vec_comp_link.erase(vec_comp_link.begin()+j);
+                             break;
+                         }
+                     }
+                     break;
+                 }
+            }
+            else{
+                iteration_counter++;
+            }
+        }
+    }
+    return make_pair(returned,sum_ostov);
+}
+QVector<int> Graph::GetAilerCircle(){
+    QVector<int> vec_visited_v;
+    QVector<int> vec_circle_v;
+    int current_v=1;
+    int begin_v;
+    vec_visited_v.push_back(1);
+    bool flag_v_here=1;
+    Matrix help_matrix_weight=*matrix_weight;
+    int amount_edge=0;
+    for(int i=1;i<amount_node+1;i++)
+        for(int j=1;j<amount_node+1;j++)
+            if(help_matrix_weight.data[i][j]!=0)
+                amount_edge++;
+    amount_edge/=2;
+    while(amount_edge>0){
+        flag_v_here=1;
+        while(flag_v_here){                       //может быть надо поменять условие
+            flag_v_here=0;
+            for(int i=1;i<amount_node+1;i++){
+                if(help_matrix_weight.data[current_v][i]!=0){
+                    vec_visited_v.push_back(i);
+                    help_matrix_weight.data[current_v][i]=0;
+                    help_matrix_weight.data[i][current_v]=0;
+                    amount_edge--;
+                    flag_v_here=1;
+                    current_v=i;
+                    break;
+                }
+            }
+
+        }
+
+        while(!flag_v_here&&!vec_visited_v.empty()){
+            for(int i=0;i<amount_node+1;i++)
+                if(help_matrix_weight.data[current_v][i]!=0){
+                    flag_v_here=1;
+                   // current_v=i;
+                    break;
+                }
+            if(!flag_v_here){
+                if(vec_visited_v.empty())
+                    qDebug()<<"error";
+                else{
+                    vec_circle_v.push_back(vec_visited_v.back());
+
+                    vec_visited_v.pop_back();
+                    if(!vec_visited_v.empty())
+                        current_v=vec_visited_v.back();
+                    else
+                        break;
+                }  
+            }
+            else{
+               //vec_visited_v.push_back(current_v);
+
+            }
+        }
+        int g=0;
+        g++;
+    }
+    return vec_circle_v;
+    }
+QVector<pair<QVector<int>,int>> Graph::GetAllGamiltonCircle(){
+    QVector<pair<QVector<int>,int>> returned;
+     int begin_node=1;
+     QQueue<int> Q;
+     Q.push_back(begin_node);
+     Tree tree_graph(begin_node);
+     while(!Q.empty()){
+         int current_node=Q.front();
+         Q.pop_front();
+         for(int i=1;i<amount_node+1;i++){
+             if(matrix_weight->data[current_node][i]!=0)
+                 if(tree_graph.AddNode(i,current_node)==true)
+                     Q.push_back(i);
+         }
+     }
+     for(int i=0;i<tree_graph.vec_node_node.size();i++){
+         if(tree_graph.vec_node_node[i].vec_parents.size()==amount_node-1 &&
+                  matrix_weight->data[tree_graph.vec_node_node[i].number][begin_node]!=0){
+             returned.push_back(make_pair(tree_graph.vec_node_node[i].vec_parents,0));
+             returned.back().first.push_back(tree_graph.vec_node_node[i].number);
+         }
+     }
+     for(int n=0;n<returned.size();n++){
+         int sum_way=0;
+         for(int j=0;j<returned[n].first.size()-1;j++){
+             if(matrix_weight->data[returned[n].first[j]][returned[n].first[j+1]]==0)
+                 qDebug()<<"Error no edge";
+             sum_way+=matrix_weight->data[returned[n].first[j]][returned[n].first[j+1]];
+         }
+         sum_way+=matrix_weight->data[returned[n].first[returned[n].first.size()-1]]
+                 [begin_node];
+         if(matrix_weight->data[returned[n].first[returned[n].first.size()-1]]
+                 [begin_node]==0)
+             qDebug()<<"Error no last edge";
+         returned[n].second=sum_way;
+     }
+     return returned;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

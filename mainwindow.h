@@ -34,6 +34,7 @@ public:
     void GetPosition(int& x,int& y);
     void LoadTable();
 private:
+    bool oriented=0;
     Graph* general_graph;
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
@@ -51,12 +52,26 @@ private:
     QPushButton* find_way_dijkstra;
     QPushButton* find_way_belman_ford;
     QPushButton* find_way_floyd_warshall;
+    QPushButton* find_max_flow;
+    QPushButton* add_cost_edges;
+    QPushButton* find_min_cost_max_flow;
+    QPushButton* delete_all_costs;
+    QPushButton* change_orient;
+    QPushButton* find_prima;
+    QPushButton* find_cruskala;
+    QPushButton* code_prufer;
+    QPushButton* find_ailer_circle;
+    QPushButton* build_gamilton;
+    QPushButton* find_comivoajor;
+    QPushButton* find_amount_ostov;
     QLineEdit* f_node_for_connect;
     QLineEdit* s_node_for_connect;
     QLineEdit* f_node_for_bfs;
     QLineEdit* s_node_for_bfs;
     QLineEdit* amount_node_for_table;
     QLineEdit* weight_for_connecting;
+    QLineEdit* le_start_max_flow;
+    QLineEdit* le_end_max_flow;
     QTextEdit* list_adjacency;
     QTableView* matrix;
     QVector<NodeItem*> vector_nodes;
@@ -65,7 +80,10 @@ private:
     QVector<ConnectionItem*> vector_selected_connections;
     QStandardItemModel* model;
     QVector<QVector<int>>ways_for_selected;
+    Matrix matrix_cost;
+    Matrix matrix_ostov=Matrix(0);
     int number_current_way=-1;
+    void PrintVecWay(QVector<int>vec);//help_func
 private slots:
     void AddNode();
     void DeleteNode();
@@ -83,7 +101,29 @@ private slots:
     void DeselectAll();
     void FindWayDijkstra_BelmanFord_FloydWorshal(int flag);//flag=0 - Dijkstra, flag=1 - BelmanFord,flag=2 - Floyd Worshal
    // void FindWayBelmanFord();
+    // 3 лаба
+    void FindMaxFlow();
+    void AddRandomCosts();
+    void DeleteAllCosts();
+    void FindMinCostsMaxFlow();
+    // 4 лаба
+    void ChangeOriented();
+    void FindPrimaKruskal(int flag); // flag=0 - Прима ; flag=1 - Краскал
+    void SelectPairs(QVector<pair<int,int>> vec_pair);
+    void CodePrufer();
+    Matrix FromVecPairToMatrix(QVector<pair<int,int>> vec);
+    int Kirhgof( QVector<QVector<int>>& arr, QVector<QVector<int>>& matrixVesov); // от  Марго
+    int findMinor( QVector<QVector<int>>& buffer, int x, int y);                 // от Марго
+    void FindAmountOstov();
     friend class ConnectionItem;
+    // 5 лаба
+    void FindEulerCircle();
+    Matrix GraphToEuler( Matrix matrix_weight/*vector<vector<int>>& EulerGr*/);
+    bool isEuler(Matrix matrix_weight,QVector<int>&deg);
+    void BuildGamilton();
+    bool VertixIsAbleForGamilton(QVector<int> v);
+    void FindComivoajor();
+
 };
 
 // MAINWINDOW_H

@@ -97,7 +97,19 @@ void ConnectionItem::Deselect(){
     m_brush=Qt::blue;
     selected=0;
 }
-
+void ConnectionItem::AddCost(int cost){
+    QString str_old=text_weght->toPlainText();
+    int spaceIndex = str_old.indexOf(" "); // Поиск позиции первого пробела
+    str_old = str_old.left(spaceIndex);
+    QString str_new=str_old+" ("+QString::number(cost)+")";
+    text_weght->setPlainText(str_new);
+}
+void ConnectionItem::DeleteCost(){
+    QString str_old=text_weght->toPlainText();
+    int spaceIndex = str_old.indexOf(" "); // Поиск позиции первого пробела
+    QString firstWord = str_old.left(spaceIndex);
+    text_weght->setPlainText(firstWord);
+}
 // /////////////////////////////////////////////////////////////////////////////NodeIten
 unsigned int NodeItem::Z_value=0;
 

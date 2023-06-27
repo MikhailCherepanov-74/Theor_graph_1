@@ -19,13 +19,7 @@ Matrix::Matrix(QStandardItemModel* model){
         data.push_back(help_vec);
     }
 }
-Matrix::Matrix(){
-    Nstring =0;
-    Mstolb =0;
-    QVector<int> help;
-    help.push_back(0);
-    data.push_back(help);
-}
+
 Matrix::Matrix(QVector<QVector<int>>& data){
 
     Nstring = data.size()==0?0:data.size()-1;
@@ -35,7 +29,19 @@ Matrix::Matrix(QVector<QVector<int>>& data){
     }
     this->data=data;
 }
-
+Matrix::Matrix(){
+    Nstring = 0;
+    Mstolb = 0;
+    QVector<int> help;
+    help.push_back(0);
+    data.push_back(help);
+}
+Matrix::Matrix(int amount_vertix){
+    Nstring = amount_vertix;
+    Mstolb = amount_vertix;
+    QVector<QVector<int>> help(amount_vertix+1, QVector<int>(amount_vertix+1, 0));
+    data=help;
+}
 void Matrix::Print(){
     QString help_str="";
     for(int i=1;i<Nstring+1;i++){
@@ -158,7 +164,15 @@ Matrix::Matrix(Matrix&& other) noexcept {
 Matrix::~Matrix(){
 
 };
+Matrix Matrix::GetMatrixKirhgof(Matrix orig){// работает для матрицы смежности
+    Matrix new_matrix(Nstring);
+    for(int i=1;i<Nstring+1;i++){
+        for(int j=1;j<Nstring+1;j++){
+            new_matrix.data[i][j]=-orig.data[i][j];
+        }
+    }
 
+}
 
 
 

@@ -81,6 +81,8 @@ friend class NodeItem;
 void Select();
 void Deselect();
 void SetPolygonDirection();
+void AddCost(int cost);
+void DeleteCost();
 };
 
 //class ConnectionItem

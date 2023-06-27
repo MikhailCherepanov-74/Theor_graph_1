@@ -7,12 +7,14 @@
 #include<QPair>
 #include<QString>
 #include<string>
+#include<set>
 #include<QStandardItemModel>
 #include<QDebug>
 #include<algorithm>
 #include "matrix.h"
 #include <cstdlib>
 #include <ctime>
+#include "tree.h"
 using namespace std;
 class MainWindow;
 class Graph
@@ -26,6 +28,7 @@ class Graph
 public:
     Graph(QString);
     Graph(QStandardItemModel*);
+    Graph(Matrix);
     Graph();
     Graph(int amount_node);
     ~Graph();
@@ -48,6 +51,18 @@ public:
     pair<QVector<int>,int> FindBelmanFord(int node_begin,int node_end,int& iteration_counter);
     //Метод Белмана-Форда работает на графах без отрицательных циклов
     pair<QVector<int>,int> FindFloydWarshal(int node_begin,int node_end,int& iteration_counter);
+    // ///////////////////////////3 лаба
+    int FindMaxFlow(int v_begin,int v_end);
+    int FindFlowMinCost(int v_begin,int v_end, Matrix matrix_cost);
+    int FindMaxFlowOneWay(QVector<int> vec_way,Matrix my_matrix);                   //служебное
+    void ReduceWayInMatrix(QVector<int> vec_way,int value_reduce,Matrix& my_matrix);  //служебное
+    // ///////////////////////////4 лаба
+    pair<QVector<pair<int,int>>,int>FindPrima(int&iteration_counter);
+    pair<QVector<pair<int,int>>,int>FindKruskal(int&iteration_counter);
+    // ///////////////////////////5 лаба
+    QVector<int> GetAilerCircle();
+    QVector<pair<QVector<int>,int>> GetAllGamiltonCircle();
+
 };
 
 #endif // GRAPH_H

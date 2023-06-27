@@ -13,13 +13,15 @@ SOURCES += \
     graph.cpp \
     main.cpp \
     mainwindow.cpp \
-    matrix.cpp
+    matrix.cpp \
+    tree.cpp
 
 HEADERS += \
     Shape.h \
     graph.h \
     mainwindow.h \
-    matrix.h
+    matrix.h \
+    tree.h
 
 FORMS += \
     mainwindow.ui
